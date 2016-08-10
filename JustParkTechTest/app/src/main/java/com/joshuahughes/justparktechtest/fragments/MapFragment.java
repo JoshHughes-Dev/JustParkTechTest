@@ -1,7 +1,7 @@
 package com.joshuahughes.justparktechtest.fragments;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,13 +14,14 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.joshuahughes.justparktechtest.R;
-import com.joshuahughes.justparktechtest.models.Datum;
-import com.joshuahughes.justparktechtest.models.RegionSearchResponse;
 
-import java.util.List;
+import com.google.maps.android.ui.IconGenerator;
+import com.joshuahughes.justparktechtest.R;
+import com.joshuahughes.justparktechtest.models.RegionSearchResponse;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -117,23 +118,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap = map;
 
         UiSettings uiSettings = googleMap.getUiSettings();
-        uiSettings.setCompassEnabled(false);
+        uiSettings.setMapToolbarEnabled(false);
 
-        googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(51.5560241,-0.2817075) , 9.0f) );
+        googleMap.setPadding(0,144,0,0);
+
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.5560241,-0.2817075) , 9.0f) );
+
     }
 
 
     public void AddResultsToMap(RegionSearchResponse regionSearchResponse){
 
+        final LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
         LatLng inputLatLng = new LatLng(
                 regionSearchResponse.getMetadata().getLocationLat(),
                 regionSearchResponse.getMetadata().getLocationLng()
         );
+        builder.include(inputLatLng);
         googleMap.addMarker(new MarkerOptions()
                 .position(inputLatLng)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
         );
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(inputLatLng, 14.0f));
+
+
+        IconGenerator iconGenerator = new IconGenerator(getActivity());
+        iconGenerator.setTextAppearance(R.style.MarkerText);
 
 
         for(int i = 0; i < regionSearchResponse.getData().size(); i++){
@@ -142,11 +153,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 regionSearchResponse.getData().get(i).getLocation().getLatitude(),
                 regionSearchResponse.getData().get(i).getLocation().getLongitude()
             );
+            builder.include(latLng);
+
+            Bitmap iconBitmap = iconGenerator.makeIcon(
+                    regionSearchResponse.getData().get(i).getCurrency().getSymbol() +
+                    String.format("%.2f",regionSearchResponse.getData().get(i).getPrice())
+            );
+
             googleMap.addMarker(new MarkerOptions()
                 .position(latLng)
+                .icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
             );
         }
 
+        LatLngBounds latLngBounds = builder.build();
+
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds,150));
     }
+
+
 
 }

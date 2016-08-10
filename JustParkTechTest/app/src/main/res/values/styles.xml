@@ -20,4 +20,8 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+
+    <style name="MarkerText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/justParkPrimary</item>
+    </style>
 </resources>
