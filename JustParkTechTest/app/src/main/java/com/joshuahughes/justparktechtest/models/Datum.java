@@ -28,19 +28,19 @@ public class Datum {
     private Currency currency;
     @SerializedName("price")
     @Expose
-    private Integer price;
+    private Double price;
     @SerializedName("price_hour")
     @Expose
     private Double priceHour;
     @SerializedName("price_day")
     @Expose
-    private Integer priceDay;
+    private Double priceDay;
     @SerializedName("price_week")
     @Expose
-    private Integer priceWeek;
+    private Double priceWeek;
     @SerializedName("price_month")
     @Expose
-    private Integer priceMonth;
+    private Double priceMonth;
     @SerializedName("address_lat")
     @Expose
     private Double addressLat;
@@ -212,7 +212,7 @@ public class Datum {
      * @return
      *     The price
      */
-    public Integer getPrice() {
+    public Double getPrice() {
         return price;
     }
 
@@ -221,7 +221,7 @@ public class Datum {
      * @param price
      *     The price
      */
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -248,7 +248,7 @@ public class Datum {
      * @return
      *     The priceDay
      */
-    public Integer getPriceDay() {
+    public Double getPriceDay() {
         return priceDay;
     }
 
@@ -257,7 +257,7 @@ public class Datum {
      * @param priceDay
      *     The price_day
      */
-    public void setPriceDay(Integer priceDay) {
+    public void setPriceDay(Double priceDay) {
         this.priceDay = priceDay;
     }
 
@@ -266,7 +266,7 @@ public class Datum {
      * @return
      *     The priceWeek
      */
-    public Integer getPriceWeek() {
+    public Double getPriceWeek() {
         return priceWeek;
     }
 
@@ -275,7 +275,7 @@ public class Datum {
      * @param priceWeek
      *     The price_week
      */
-    public void setPriceWeek(Integer priceWeek) {
+    public void setPriceWeek(Double priceWeek) {
         this.priceWeek = priceWeek;
     }
 
@@ -284,7 +284,7 @@ public class Datum {
      * @return
      *     The priceMonth
      */
-    public Integer getPriceMonth() {
+    public Double getPriceMonth() {
         return priceMonth;
     }
 
@@ -293,7 +293,7 @@ public class Datum {
      * @param priceMonth
      *     The price_month
      */
-    public void setPriceMonth(Integer priceMonth) {
+    public void setPriceMonth(Double priceMonth) {
         this.priceMonth = priceMonth;
     }
 

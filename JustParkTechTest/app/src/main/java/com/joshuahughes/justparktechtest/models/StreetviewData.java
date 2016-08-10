@@ -20,7 +20,7 @@ public class StreetviewData {
     private Double pitch;
     @SerializedName("zoom")
     @Expose
-    private Integer zoom;
+    private Double zoom;
 
     /**
      * 
@@ -99,7 +99,7 @@ public class StreetviewData {
      * @return
      *     The zoom
      */
-    public Integer getZoom() {
+    public Double getZoom() {
         return zoom;
     }
 
@@ -108,7 +108,7 @@ public class StreetviewData {
      * @param zoom
      *     The zoom
      */
-    public void setZoom(Integer zoom) {
+    public void setZoom(Double zoom) {
         this.zoom = zoom;
     }
 
