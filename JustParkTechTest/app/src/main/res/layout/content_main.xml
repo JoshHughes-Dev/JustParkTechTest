@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.joshuahughes.justparktechtest.MainActivity">
+
+    <fragment
+        android:name="com.joshuahughes.justparktechtest.fragments.MapFragment"
+        android:id="@+id/mapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_map" />
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Demo Search"
+                    android:id="@+id/testApiButton"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:drawableLeft="@drawable/places_ic_search"
+                    android:layout_alignParentLeft="true"/>
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progressBar"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    />
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+
+
+
+
+</RelativeLayout>

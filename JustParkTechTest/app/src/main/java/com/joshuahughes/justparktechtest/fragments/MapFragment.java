@@ -8,10 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.joshuahughes.justparktechtest.R;
+import com.joshuahughes.justparktechtest.models.Datum;
+import com.joshuahughes.justparktechtest.models.RegionSearchResponse;
+
+import java.util.List;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -106,8 +115,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap map){
         googleMap = map;
+
+        UiSettings uiSettings = googleMap.getUiSettings();
+        uiSettings.setCompassEnabled(false);
+
+        googleMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(51.5560241,-0.2817075) , 9.0f) );
     }
 
 
+    public void AddResultsToMap(RegionSearchResponse regionSearchResponse){
+
+        LatLng inputLatLng = new LatLng(
+                regionSearchResponse.getMetadata().getLocationLat(),
+                regionSearchResponse.getMetadata().getLocationLng()
+        );
+        googleMap.addMarker(new MarkerOptions()
+                .position(inputLatLng)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+        );
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(inputLatLng, 14.0f));
+
+
+        for(int i = 0; i < regionSearchResponse.getData().size(); i++){
+
+            LatLng latLng = new LatLng(
+                regionSearchResponse.getData().get(i).getLocation().getLatitude(),
+                regionSearchResponse.getData().get(i).getLocation().getLongitude()
+            );
+            googleMap.addMarker(new MarkerOptions()
+                .position(latLng)
+            );
+        }
+
+    }
 
 }

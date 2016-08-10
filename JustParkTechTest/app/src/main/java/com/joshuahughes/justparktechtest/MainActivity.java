@@ -1,13 +1,14 @@
 package com.joshuahughes.justparktechtest;
 
-import android.support.v4.app.FragmentTransaction;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+
 
 import com.joshuahughes.justparktechtest.api.ApiClient;
 import com.joshuahughes.justparktechtest.api.JustParkApi;
@@ -26,6 +27,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements MapFragment.OnFragmentInteractionListener{
 
     private ProgressBar progressBar;
+    private MapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
+
+        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+
 
         testApiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +68,9 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
             public void onResponse(Call<RegionSearchResponse> call, Response<RegionSearchResponse> response) {
                 List<Datum> data = response.body().getData();
                 Log.d("test","success: " + data.size());
-                TextView textView = (TextView) findViewById(R.id.responseTextView);
-                textView.setText("results" + data.size());
+
+                mapFragment.AddResultsToMap(response.body());
+
                 progressBar.setVisibility(View.INVISIBLE);
             }
 
