@@ -1,9 +1,12 @@
 package com.joshuahughes.justparktechtest.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Gallery {
+public class Gallery implements Parcelable {
 
     @SerializedName("thumbnail")
     @Expose
@@ -48,4 +51,34 @@ public class Gallery {
         this.normal = normal;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.thumbnail, flags);
+        dest.writeParcelable(this.normal, flags);
+    }
+
+    public Gallery() {
+    }
+
+    protected Gallery(Parcel in) {
+        this.thumbnail = in.readParcelable(Thumbnail.class.getClassLoader());
+        this.normal = in.readParcelable(Normal.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Gallery> CREATOR = new Parcelable.Creator<Gallery>() {
+        @Override
+        public Gallery createFromParcel(Parcel source) {
+            return new Gallery(source);
+        }
+
+        @Override
+        public Gallery[] newArray(int size) {
+            return new Gallery[size];
+        }
+    };
 }

@@ -1,10 +1,13 @@
 
 package com.joshuahughes.justparktechtest.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class StreetviewData {
+public class StreetviewData implements Parcelable {
 
     @SerializedName("lat")
     @Expose
@@ -112,4 +115,40 @@ public class StreetviewData {
         this.zoom = zoom;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.lat);
+        dest.writeValue(this.lng);
+        dest.writeValue(this.heading);
+        dest.writeValue(this.pitch);
+        dest.writeValue(this.zoom);
+    }
+
+    public StreetviewData() {
+    }
+
+    protected StreetviewData(Parcel in) {
+        this.lat = (Double) in.readValue(Double.class.getClassLoader());
+        this.lng = (Double) in.readValue(Double.class.getClassLoader());
+        this.heading = (Double) in.readValue(Double.class.getClassLoader());
+        this.pitch = (Double) in.readValue(Double.class.getClassLoader());
+        this.zoom = (Double) in.readValue(Double.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<StreetviewData> CREATOR = new Parcelable.Creator<StreetviewData>() {
+        @Override
+        public StreetviewData createFromParcel(Parcel source) {
+            return new StreetviewData(source);
+        }
+
+        @Override
+        public StreetviewData[] newArray(int size) {
+            return new StreetviewData[size];
+        }
+    };
 }

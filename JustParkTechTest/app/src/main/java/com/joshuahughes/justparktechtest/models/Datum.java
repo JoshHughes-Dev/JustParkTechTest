@@ -1,12 +1,15 @@
 
 package com.joshuahughes.justparktechtest.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum {
+public class Datum implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -639,4 +642,91 @@ public class Datum {
         this.streetviewData = streetviewData;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.url);
+        dest.writeValue(this.distance);
+        dest.writeString(this.title);
+        dest.writeString(this.customTitle);
+        dest.writeParcelable(this.currency, flags);
+        dest.writeValue(this.price);
+        dest.writeValue(this.priceHour);
+        dest.writeValue(this.priceDay);
+        dest.writeValue(this.priceWeek);
+        dest.writeValue(this.priceMonth);
+        dest.writeValue(this.addressLat);
+        dest.writeValue(this.addressLng);
+        dest.writeValue(this.reviewCount);
+        dest.writeValue(this.reviewAverage);
+        dest.writeString(this.address1);
+        dest.writeString(this.address2);
+        dest.writeString(this.address3);
+        dest.writeString(this.postalCode);
+        dest.writeString(this.cancellationPolicy);
+        dest.writeString(this.cancellationPolicyType);
+        dest.writeTypedList(facilities);
+        dest.writeParcelable(this.integrationPartner, flags);
+        dest.writeParcelable(this.location, flags);
+        dest.writeString(this.category);
+        dest.writeValue(this.quantity);
+        dest.writeParcelable(this.review, flags);
+        dest.writeTypedList(gallery);
+        dest.writeString(this.description);
+        dest.writeParcelable(this.streetviewData, flags);
+    }
+
+    public Datum() {
+    }
+
+    protected Datum(Parcel in) {
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.url = in.readString();
+        this.distance = (Double) in.readValue(Double.class.getClassLoader());
+        this.title = in.readString();
+        this.customTitle = in.readString();
+        this.currency = in.readParcelable(Currency.class.getClassLoader());
+        this.price = (Double) in.readValue(Double.class.getClassLoader());
+        this.priceHour = (Double) in.readValue(Double.class.getClassLoader());
+        this.priceDay = (Double) in.readValue(Double.class.getClassLoader());
+        this.priceWeek = (Double) in.readValue(Double.class.getClassLoader());
+        this.priceMonth = (Double) in.readValue(Double.class.getClassLoader());
+        this.addressLat = (Double) in.readValue(Double.class.getClassLoader());
+        this.addressLng = (Double) in.readValue(Double.class.getClassLoader());
+        this.reviewCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.reviewAverage = (Double) in.readValue(Double.class.getClassLoader());
+        this.address1 = in.readString();
+        this.address2 = in.readString();
+        this.address3 = in.readString();
+        this.postalCode = in.readString();
+        this.cancellationPolicy = in.readString();
+        this.cancellationPolicyType = in.readString();
+        this.facilities = in.createTypedArrayList(Facility.CREATOR);
+        this.integrationPartner = in.readParcelable(IntegrationPartner.class.getClassLoader());
+        this.location = in.readParcelable(Location.class.getClassLoader());
+        this.category = in.readString();
+        this.quantity = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.review = in.readParcelable(Review.class.getClassLoader());
+        this.gallery = in.createTypedArrayList(Gallery.CREATOR);
+        this.description = in.readString();
+        this.streetviewData = in.readParcelable(StreetviewData.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Datum> CREATOR = new Parcelable.Creator<Datum>() {
+        @Override
+        public Datum createFromParcel(Parcel source) {
+            return new Datum(source);
+        }
+
+        @Override
+        public Datum[] newArray(int size) {
+            return new Datum[size];
+        }
+    };
 }

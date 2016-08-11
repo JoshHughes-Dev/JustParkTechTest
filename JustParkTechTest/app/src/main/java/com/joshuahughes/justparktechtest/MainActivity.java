@@ -28,20 +28,27 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
     private ProgressBar progressBar;
     private MapFragment mapFragment;
+    private final String mapFragmentKey = "mapfragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button testApiButton = (Button) findViewById(R.id.testApiButton);
+        if(savedInstanceState != null){
+            mapFragment = (MapFragment) getSupportFragmentManager().getFragment(savedInstanceState, mapFragmentKey);
+        }
+        else{
+            //new instance of mapfragment
+            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        }
+
+
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
 
-        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-
-
+        Button testApiButton = (Button) findViewById(R.id.testApiButton);
         testApiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +56,12 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
                 ApiConfig();
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, mapFragmentKey, mapFragment);
     }
 
     private void ApiConfig(){
@@ -69,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
                 List<Datum> data = response.body().getData();
                 Log.d("test","success: " + data.size());
 
-                mapFragment.AddResultsToMap(response.body());
+                mapFragment.DrawNewResponse(response.body());
 
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -84,5 +97,7 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
     }
 
     @Override
-    public void onFragmentInteraction(){}
+    public void onMapFragmentMarkerClick(Datum datum){
+
+    }
 }

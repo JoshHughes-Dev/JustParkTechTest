@@ -1,10 +1,13 @@
 
 package com.joshuahughes.justparktechtest.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Metadata {
+public class Metadata implements Parcelable {
 
     @SerializedName("location_lat")
     @Expose
@@ -23,7 +26,7 @@ public class Metadata {
     private Integer perPage;
     @SerializedName("previous")
     @Expose
-    private Object previous;
+    private String previous;
     @SerializedName("next")
     @Expose
     private String next;
@@ -123,7 +126,7 @@ public class Metadata {
      * @return
      *     The previous
      */
-    public Object getPrevious() {
+    public String getPrevious() {
         return previous;
     }
 
@@ -132,7 +135,7 @@ public class Metadata {
      * @param previous
      *     The previous
      */
-    public void setPrevious(Object previous) {
+    public void setPrevious(String previous) {
         this.previous = previous;
     }
 
@@ -154,4 +157,45 @@ public class Metadata {
         this.next = next;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.locationLat);
+        dest.writeValue(this.locationLng);
+        dest.writeValue(this.total);
+        dest.writeValue(this.start);
+        dest.writeValue(this.perPage);
+        dest.writeString(this.previous);
+        dest.writeString(this.next);
+    }
+
+    public Metadata() {
+    }
+
+    protected Metadata(Parcel in) {
+        this.locationLat = (Double) in.readValue(Double.class.getClassLoader());
+        this.locationLng = (Double) in.readValue(Double.class.getClassLoader());
+        this.total = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.start = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.perPage = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.previous = in.readString();
+        this.next = in.readString();
+    }
+
+    public static final Parcelable.Creator<Metadata> CREATOR = new Parcelable.Creator<Metadata>() {
+        @Override
+        public Metadata createFromParcel(Parcel source) {
+            return new Metadata(source);
+        }
+
+        @Override
+        public Metadata[] newArray(int size) {
+            return new Metadata[size];
+        }
+    };
 }

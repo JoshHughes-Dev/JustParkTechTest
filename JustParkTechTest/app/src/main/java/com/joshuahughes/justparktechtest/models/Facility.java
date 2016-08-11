@@ -2,10 +2,13 @@
 package com.joshuahughes.justparktechtest.models;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Facility {
+public class Facility implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -92,4 +95,38 @@ public class Facility {
         this.isRestricted = isRestricted;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeValue(this.isRestricted);
+    }
+
+    public Facility() {
+    }
+
+    protected Facility(Parcel in) {
+        this.id = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        this.isRestricted = (Boolean) in.readValue(Boolean.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Facility> CREATOR = new Parcelable.Creator<Facility>() {
+        @Override
+        public Facility createFromParcel(Parcel source) {
+            return new Facility(source);
+        }
+
+        @Override
+        public Facility[] newArray(int size) {
+            return new Facility[size];
+        }
+    };
 }

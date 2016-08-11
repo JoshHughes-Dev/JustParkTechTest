@@ -1,10 +1,13 @@
 
 package com.joshuahughes.justparktechtest.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Thumbnail {
+public class Thumbnail implements Parcelable {
 
     @SerializedName("url")
     @Expose
@@ -70,4 +73,36 @@ public class Thumbnail {
         this.height = height;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.url);
+        dest.writeValue(this.width);
+        dest.writeValue(this.height);
+    }
+
+    public Thumbnail() {
+    }
+
+    protected Thumbnail(Parcel in) {
+        this.url = in.readString();
+        this.width = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.height = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Thumbnail> CREATOR = new Parcelable.Creator<Thumbnail>() {
+        @Override
+        public Thumbnail createFromParcel(Parcel source) {
+            return new Thumbnail(source);
+        }
+
+        @Override
+        public Thumbnail[] newArray(int size) {
+            return new Thumbnail[size];
+        }
+    };
 }

@@ -24,4 +24,7 @@
     <style name="MarkerText" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/justParkPrimary</item>
     </style>
+    <style name="MarkerTextSelected" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 </resources>
