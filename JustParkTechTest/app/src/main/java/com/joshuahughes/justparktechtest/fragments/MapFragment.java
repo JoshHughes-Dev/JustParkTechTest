@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -33,7 +34,8 @@ import java.util.List;
 
 public class MapFragment extends Fragment implements
         OnMapReadyCallback,
-        OnMarkerClickListener {
+        OnMarkerClickListener,
+        OnMapClickListener{
 
 
     private MapView mapView;
@@ -49,9 +51,7 @@ public class MapFragment extends Fragment implements
     private final String selectedDatumIdKey = "selectedDatum";
 
     private Marker selectedMarker;
-
     private HashMap<String,Integer> markerToDatumMap;
-
     private OnFragmentInteractionListener mListener;
 
     public MapFragment() {
@@ -67,7 +67,6 @@ public class MapFragment extends Fragment implements
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onMapFragmentMarkerClick(Datum datum);
     }
 
@@ -171,6 +170,7 @@ public class MapFragment extends Fragment implements
         googleMap.getUiSettings().setMapToolbarEnabled(false);;
         googleMap.setPadding(0,144,0,0);
         googleMap.setOnMarkerClickListener(this);
+        googleMap.setOnMapClickListener(this);
 
         if(cameraPosition == null) {
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.5560241, -0.2817075), 9.0f));
@@ -182,9 +182,44 @@ public class MapFragment extends Fragment implements
         if(regionSearchResponse != null){
             LatLng inputLatlng = drawStartLocationMarker(regionSearchResponse.getMetadata());
             List<LatLng> latLngs = drawMarkers(regionSearchResponse.getData());
+
+            if(selectedDatumId != null) {
+                for (Datum selectedDatum : regionSearchResponse.getData()) {
+                    if (selectedDatum.getId().equals(selectedDatumId)){
+                        mListener.onMapFragmentMarkerClick(selectedDatum);
+                    }
+                }
+            }
         }
     }
 
+    @Override
+    public void onMapClick(LatLng point) {
+        if(selectedDatumId != null){
+            deSelectCurrentMarker();
+            selectedDatumId = null;
+            selectedMarker = null;
+            mListener.onMapFragmentMarkerClick(null);
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker){
+
+        deSelectCurrentMarker();
+
+        //set new selected marker
+        Datum newDatum = getDatumFromMarkerMap(marker);
+        if(newDatum != null) {
+            marker.setIcon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(newDatum, true)));
+            selectedMarker = marker;
+            selectedDatumId = newDatum.getId();
+        }
+
+        mListener.onMapFragmentMarkerClick(newDatum);
+
+        return false;
+    }
 
     public void DrawNewResponse(RegionSearchResponse rsr){
 
@@ -254,28 +289,6 @@ public class MapFragment extends Fragment implements
     }
 
 
-    @Override
-    public boolean onMarkerClick(final Marker marker){
-
-        //re-set previously selected marker (if there is one)
-        if(selectedMarker != null) {
-            Datum prevDatum = getDatumFromMarkerMap(selectedMarker);
-            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(prevDatum, false)));
-        }
-
-        //set new selected marker
-        Datum newDatum = getDatumFromMarkerMap(marker);
-        if(newDatum != null) {
-            marker.setIcon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(newDatum, true)));
-            selectedMarker = marker;
-            selectedDatumId = newDatum.getId();
-        }
-
-        mListener.onMapFragmentMarkerClick(newDatum);
-
-        return true;
-    }
-
     private Bitmap createMarkerBitmap(Datum datum, boolean selected){
 
         IconGenerator iconGenerator = new IconGenerator(getActivity());
@@ -301,5 +314,13 @@ public class MapFragment extends Fragment implements
             }
         }
         return null;
+    }
+
+    private void deSelectCurrentMarker(){
+        //re-set previously selected marker (if there is one)
+        if(selectedMarker != null) {
+            Datum prevDatum = getDatumFromMarkerMap(selectedMarker);
+            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(prevDatum, false)));
+        }
     }
 }
