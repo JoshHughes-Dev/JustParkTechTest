@@ -7,13 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.joshuahughes.justparktechtest.R;
 import com.joshuahughes.justparktechtest.SimpleDividerItemDecoration;
@@ -21,9 +17,10 @@ import com.joshuahughes.justparktechtest.adapters.DatumAdapter;
 import com.joshuahughes.justparktechtest.models.Datum;
 import com.joshuahughes.justparktechtest.models.RegionSearchResponse;
 
-import java.util.List;
-
-
+/**
+ * Fragment used to display API search results in list format through a 'bottom sheet' UI.
+ * Behaves like a dialog appearing on-top of other UI elements when opened
+ */
 public class ListBottomSheetFragment extends BottomSheetDialogFragment {
 
     private RegionSearchResponse regionSearchResponse;
@@ -45,7 +42,8 @@ public class ListBottomSheetFragment extends BottomSheetDialogFragment {
         }
     }
 
-    private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback = new BottomSheetBehavior.BottomSheetCallback() {
+    private BottomSheetBehavior.BottomSheetCallback mBottomSheetBehaviorCallback =
+            new BottomSheetBehavior.BottomSheetCallback() {
 
         @Override
         public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -64,11 +62,13 @@ public class ListBottomSheetFragment extends BottomSheetDialogFragment {
         super.setupDialog(dialog, style);
         View contentView = View.inflate(getContext(), R.layout.fragment_list_bottom_sheet, null);
 
-        RecyclerView recyclerView = (RecyclerView) contentView.findViewById(R.id.resultsRecyclerView);
+        RecyclerView recyclerView = (RecyclerView) contentView
+                .findViewById(R.id.resultsRecyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-        recyclerView.setAdapter(new DatumAdapter(regionSearchResponse.getData(), new DatumAdapter.ItemListener() {
+        recyclerView.setAdapter(new DatumAdapter(getActivity(),regionSearchResponse.getData(),
+                new DatumAdapter.ItemListener() {
             @Override
             public void onItemClick(Datum datum) {
 
@@ -77,7 +77,8 @@ public class ListBottomSheetFragment extends BottomSheetDialogFragment {
 
         dialog.setContentView(contentView);
 
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
+        CoordinatorLayout.LayoutParams params =
+                (CoordinatorLayout.LayoutParams) ((View) contentView.getParent()).getLayoutParams();
         CoordinatorLayout.Behavior behavior = params.getBehavior();
 
         if( behavior != null && behavior instanceof BottomSheetBehavior ) {

@@ -1,26 +1,28 @@
 package com.joshuahughes.justparktechtest.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.joshuahughes.justparktechtest.R;
+import com.joshuahughes.justparktechtest.Utils;
 import com.joshuahughes.justparktechtest.models.Datum;
 
 import java.util.List;
 
-/**
- * Created by joshuahughes on 11/08/2016.
- */
 public class DatumAdapter extends RecyclerView.Adapter<DatumAdapter.ViewHolder> {
+
+    private Context mContext;
+
     private List<Datum> mData;
     private ItemListener mListener;
 
-    public DatumAdapter(List<Datum> data, ItemListener listener) {
+    public DatumAdapter(Context context, List<Datum> data, ItemListener listener) {
+        mContext = context;
         mData = data;
         mListener = listener;
     }
@@ -67,30 +69,22 @@ public class DatumAdapter extends RecyclerView.Adapter<DatumAdapter.ViewHolder> 
         public void setData(Datum d) {
             this.datum = d;
             rowTitle.setText(datum.getTitle());
-            rowPrice.setText(datum.getCurrency().getSymbol() +
-                    String.format("%.2f",datum.getPrice()));
+            rowPrice.setText(Utils.getFormattedPrice(
+                    datum.getCurrency().getSymbol(), datum.getPrice()));
 
-            String dist = "";
-            if(datum.getDistance() > 1){
-                dist = String.format("%.2f km", datum.getDistance());
-            }
-            else {
-                String distInMeters = Double.toString(Math.floor(datum.getDistance() * 1000));
-                dist = distInMeters + " m";
-            }
-            rowDistance.setText(dist);
+            rowDistance.setText(Utils.getFormattedDistance(mContext.getResources(), datum));
 
             if(datum.getReviewCount() > 0){
-                rowRatingsInfo.setText(datum.getReviewAverage() + " (" + datum.getReviewCount() +")");
+                rowRatingsInfo.setText(
+                        Utils.getFormattedReviewScore(mContext.getResources(), datum));
                 rowRatingsBar.setMax(5);
                 rowRatingsBar.setNumStars(5);
                 rowRatingsBar.setRating(datum.getReviewAverage().floatValue());
             }
             else{
-                rowRatingsInfo.setText(" - Not review yet");
+                rowRatingsInfo.setText(mContext.getResources().getString(R.string.no_review));
                 rowRatingsBar.setVisibility(View.GONE);
             }
-
         }
 
         @Override

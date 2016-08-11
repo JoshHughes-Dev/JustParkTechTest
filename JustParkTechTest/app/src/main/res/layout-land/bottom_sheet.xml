@@ -19,7 +19,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Title"
             android:id="@+id/detailsTitle"
             android:gravity="center"
             android:textSize="18sp"
@@ -40,7 +39,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/detailsCategory"
-                    android:text="category"
                     android:gravity="center"
                     android:paddingBottom="8dp"/>
 
@@ -48,7 +46,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/detailsPrices"
-                    android:text="£7.00 per day / £40 per week"
                     android:gravity="center" />
 
             </LinearLayout>
@@ -74,6 +71,7 @@
                         android:numStars="5"
                         android:progressTint="@android:color/holo_orange_light"
                         style="?android:attr/ratingBarStyleSmall"
+                        android:stepSize="0.5"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         />
@@ -81,7 +79,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/detailsRatingInfo"
-                        android:text="4.97 (15)"
                         android:gravity="center_horizontal"/>
 
                 </LinearLayout>
@@ -102,7 +99,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/detailsDistance"
-                        android:text="200m"
                         android:gravity="center_horizontal"/>
 
                 </LinearLayout>
@@ -123,7 +119,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:id="@+id/detailsSpaces"
-                        android:text="10 spaces"
                         android:gravity="center_horizontal"/>
 
                 </LinearLayout>

@@ -1,4 +1,3 @@
-
 package com.joshuahughes.justparktechtest.models;
 
 import android.os.Parcel;

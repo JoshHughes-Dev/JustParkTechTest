@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">JustParkTechTest</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="demo_search"> demo search</string>
+    <string name="review_score">%1$s (%2$s)</string>
+    <string name="no_review">" - Not reviewed yet"</string>
+    <string name="distance_meters">%1$sm</string>
+    <string name="spaces">%1$s space(s)</string>
+    <string name="daily_weekly_price">%1$s per day / %2$s per week</string>
+    <string name="request_error_dialog_title">Could not do search</string>
+    <string name="request_error_dialog_message">Check internet connection and try again.</string>
 
 </resources>

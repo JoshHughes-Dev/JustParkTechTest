@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/rowPrice"
         android:paddingRight="4dp"
-        android:text="£40.00"
         android:minWidth="64dp"
         android:textSize="18sp"
         android:textColor="@color/justParkPrimary"/>
@@ -32,7 +31,6 @@
             android:id="@+id/rowTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="location name"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
 
@@ -46,7 +44,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="distance"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 />
             <LinearLayout
@@ -61,22 +58,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:numStars="5"
+                    android:stepSize="0.5"
                     android:progressTint="@android:color/holo_orange_light"
                     style="?android:attr/ratingBarStyleSmall"
-
                     android:layout_marginRight="8dp"
                     />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/rowRatingsInfo"
-                    android:text="4.97 (15)" />
+                    android:id="@+id/rowRatingsInfo" />
 
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
-
-
 
 </LinearLayout>

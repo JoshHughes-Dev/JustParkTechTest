@@ -3,7 +3,6 @@ package com.joshuahughes.justparktechtest.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-
 public class RegionSearchRequest {
 
     @SerializedName("near")

@@ -23,8 +23,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
 import com.joshuahughes.justparktechtest.R;
+import com.joshuahughes.justparktechtest.Utils;
 import com.joshuahughes.justparktechtest.models.Datum;
-import com.joshuahughes.justparktechtest.models.Metadata;
 import com.joshuahughes.justparktechtest.models.RegionSearchResponse;
 
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ public class MapFragment extends Fragment implements
         OnMapReadyCallback,
         OnMarkerClickListener,
         OnMapClickListener{
-
 
     private MapView mapView;
     private GoogleMap googleMap;
@@ -58,14 +57,6 @@ public class MapFragment extends Fragment implements
         // Required empty public constructor
     }
 
-
-    public static MapFragment newInstance() {
-        MapFragment fragment = new MapFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     public interface OnFragmentInteractionListener {
         void onMapFragmentMarkerClick(Datum datum);
     }
@@ -73,9 +64,7 @@ public class MapFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
+        if (getArguments() != null) { }
     }
 
     @Override
@@ -104,7 +93,6 @@ public class MapFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-
     }
 
     @Override
@@ -139,7 +127,6 @@ public class MapFragment extends Fragment implements
     public void onResume(){
         mapView.onResume();
         super.onResume();
-
     }
 
     @Override
@@ -163,25 +150,32 @@ public class MapFragment extends Fragment implements
         super.onLowMemory();
     }
 
+    /**
+     * initialises map (and settings)
+     * sets camera position
+     * if response model already exists, populates map with markers.
+     * @param map
+     */
     @Override
     public void onMapReady(GoogleMap map){
         googleMap = map;
 
-        googleMap.getUiSettings().setMapToolbarEnabled(false);;
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setPadding(0,144,0,0);
         googleMap.setOnMarkerClickListener(this);
         googleMap.setOnMapClickListener(this);
 
         if(cameraPosition == null) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.5560241, -0.2817075), 9.0f));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(51.5560241, -0.2817075), 9.0f));
         }
         else{
             googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
         if(regionSearchResponse != null){
-            LatLng inputLatlng = drawStartLocationMarker(regionSearchResponse.getMetadata());
-            List<LatLng> latLngs = drawMarkers(regionSearchResponse.getData());
+            drawStartLocationMarker();
+            drawMarkers();
 
             if(selectedDatumId != null) {
                 for (Datum selectedDatum : regionSearchResponse.getData()) {
@@ -196,17 +190,22 @@ public class MapFragment extends Fragment implements
     @Override
     public void onMapClick(LatLng point) {
         if(selectedDatumId != null){
-            deSelectCurrentMarker();
+            deselectCurrentMarker();
             selectedDatumId = null;
             selectedMarker = null;
             mListener.onMapFragmentMarkerClick(null);
         }
     }
 
+    /**
+     * uses interface to call method in parent activity to open 'details' bottom sheet
+     * @param marker
+     * @return
+     */
     @Override
     public boolean onMarkerClick(final Marker marker){
 
-        deSelectCurrentMarker();
+        deselectCurrentMarker();
 
         //set new selected marker
         Datum newDatum = getDatumFromMarkerMap(marker);
@@ -227,45 +226,52 @@ public class MapFragment extends Fragment implements
 
         googleMap.clear();
 
-        LatLng inputLatlng = drawStartLocationMarker(regionSearchResponse.getMetadata());
-        List<LatLng> latLngs = drawMarkers(regionSearchResponse.getData());
+        LatLng inputLatlng = drawStartLocationMarker();
+        List<LatLng> latLngs = drawMarkers();
 
         latLngs.add(inputLatlng);
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(latLngs),150));
     }
 
+    /**
+     * draws markers on map as well as populating marker to datum hash map
+     * @return
+     */
+    private List<LatLng> drawMarkers(){
 
-    private List<LatLng> drawMarkers(List<Datum> data){
 
         List<LatLng> latLngs = new ArrayList<>();
         markerToDatumMap = new HashMap<>();
 
-        for(int i = 0; i < data.size(); i++){
+        for(int i = 0; i < regionSearchResponse.getData().size(); i++){
 
             LatLng latLng = new LatLng(
-                    data.get(i).getLocation().getLatitude(),
-                    data.get(i).getLocation().getLongitude()
+                    regionSearchResponse.getData().get(i).getLocation().getLatitude(),
+                    regionSearchResponse.getData().get(i).getLocation().getLongitude()
             );
             latLngs.add(latLng);
 
-            boolean preSelected = (selectedDatumId != null && selectedDatumId.equals(data.get(i).getId()));
+            boolean preSelected = (selectedDatumId != null && selectedDatumId.equals(
+                    regionSearchResponse.getData().get(i).getId()));
 
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .icon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(data.get(i), preSelected)))
+                    .icon(BitmapDescriptorFactory.fromBitmap(
+                            createMarkerBitmap(regionSearchResponse.getData().get(i), preSelected)))
             );
             if(preSelected){
                 selectedMarker = marker;
             }
 
-            markerToDatumMap.put(marker.getId(), data.get(i).getId());
+            markerToDatumMap.put(marker.getId(), regionSearchResponse.getData().get(i).getId());
         }
 
         return latLngs;
     }
 
-    private LatLng drawStartLocationMarker(Metadata metadata){
+    private LatLng drawStartLocationMarker(){
+
         LatLng inputLatLng = new LatLng(
                 regionSearchResponse.getMetadata().getLocationLat(),
                 regionSearchResponse.getMetadata().getLocationLng()
@@ -278,6 +284,11 @@ public class MapFragment extends Fragment implements
         return inputLatLng;
     }
 
+    /**
+     * used to define area of markers and aid camera position for map
+     * @param latLngs
+     * @return
+     */
     private LatLngBounds getLatLngBounds(List<LatLng> latLngs){
         final LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
@@ -288,6 +299,12 @@ public class MapFragment extends Fragment implements
         return builder.build();
     }
 
+    /**
+     * creates custom bitmap for results marker icons
+     * @param datum
+     * @param selected
+     * @return
+     */
     private Bitmap createMarkerBitmap(Datum datum, boolean selected){
 
         IconGenerator iconGenerator = new IconGenerator(getActivity());
@@ -300,8 +317,8 @@ public class MapFragment extends Fragment implements
             iconGenerator.setTextAppearance(R.style.MarkerText);
         }
 
-        return iconGenerator.makeIcon(datum.getCurrency().getSymbol() +
-                String.format("%.2f",datum.getPrice()));
+        return iconGenerator.makeIcon(
+                Utils.getFormattedPrice(datum.getCurrency().getSymbol(), datum.getPrice()));
     }
 
     private Datum getDatumFromMarkerMap(Marker marker){
@@ -315,14 +332,20 @@ public class MapFragment extends Fragment implements
         return null;
     }
 
-    private void deSelectCurrentMarker(){
+    private void deselectCurrentMarker(){
         //re-set previously selected marker (if there is one)
         if(selectedMarker != null) {
             Datum prevDatum = getDatumFromMarkerMap(selectedMarker);
-            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(prevDatum, false)));
+            selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(
+                    createMarkerBitmap(prevDatum, false)));
         }
     }
 
+    /**
+     * used so that main activity can retrieve results (as it doesnt store them locally itself)
+     * and be used for results list fragment
+     * @return
+     */
     public RegionSearchResponse getRegionSearchResponseData(){
         return regionSearchResponse;
     }

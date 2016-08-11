@@ -1,16 +1,11 @@
 package com.joshuahughes.justparktechtest;
 
 
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+import android.app.AlertDialog;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
@@ -18,8 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-
-import com.google.android.gms.vision.text.Text;
 import com.joshuahughes.justparktechtest.api.ApiClient;
 import com.joshuahughes.justparktechtest.api.JustParkApi;
 import com.joshuahughes.justparktechtest.fragments.ListBottomSheetFragment;
@@ -29,12 +22,13 @@ import com.joshuahughes.justparktechtest.models.Near;
 import com.joshuahughes.justparktechtest.models.RegionSearchRequest;
 import com.joshuahughes.justparktechtest.models.RegionSearchResponse;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Main activity hosting several fragments as well as handling API client.
+ */
 public class MainActivity extends AppCompatActivity implements MapFragment.OnFragmentInteractionListener{
 
     private ProgressBar progressBar;
@@ -45,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
     private final String fabShownKey = "fabShownKey";
 
     private MapFragment mapFragment;
-    private final String mapFragmentKey = "mapfragment";
+    private final String mapFragmentKey = "mapFragment";
 
     private BottomSheetBehavior bottomSheetBehavior;
 
@@ -55,24 +49,26 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
         setContentView(R.layout.activity_main);
 
         if(savedInstanceState != null){
-            mapFragment = (MapFragment) getSupportFragmentManager().getFragment(savedInstanceState, mapFragmentKey);
+            mapFragment = (MapFragment) getSupportFragmentManager()
+                    .getFragment(savedInstanceState, mapFragmentKey);
             fabShown = savedInstanceState.getBoolean(fabShownKey);
         }
         else{
             //new instance of mapfragment
-            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+            mapFragment = (MapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.mapFragment);
         }
 
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
 
-        Button testApiButton = (Button) findViewById(R.id.testApiButton);
-        testApiButton.setOnClickListener(new View.OnClickListener() {
+        Button demoSearchButton = (Button) findViewById(R.id.demoSearchButton);
+        demoSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                ApiConfig();
+                ApiRequest();
             }
         });
 
@@ -98,7 +94,11 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
         outState.putBoolean(fabShownKey,fabShown);
     }
 
-    private void ApiConfig(){
+    /**
+     * creates and executes API request.
+     * (creates input model, creates API client using Retrofit, executes call to JustPark API)
+     */
+    private void ApiRequest(){
 
         RegionSearchRequest model = new RegionSearchRequest();
         Near near = new Near();
@@ -112,25 +112,38 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
         Call<RegionSearchResponse> call = justParkApi.regionSearch(model);
         call.enqueue(new Callback<RegionSearchResponse>() {
             @Override
-            public void onResponse(Call<RegionSearchResponse> call, Response<RegionSearchResponse> response) {
-                List<Datum> data = response.body().getData();
+            public void onResponse(Call<RegionSearchResponse> call,
+                                   Response<RegionSearchResponse> response) {
 
                 mapFragment.DrawNewResponse(response.body());
-
                 progressBar.setVisibility(View.INVISIBLE);
-
-                fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                fab.animate().translationY(0).setInterpolator(
+                        new DecelerateInterpolator(2)).start();
                 fabShown = true;
             }
 
             @Override
             public void onFailure(Call<RegionSearchResponse> call, Throwable t) {
                 progressBar.setVisibility(View.INVISIBLE);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                builder.setTitle(R.string.request_error_dialog_title);
+                builder.setMessage(R.string.request_error_dialog_message);
+                builder.setCancelable(true);
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
 
     }
 
+    /**
+     * from interface with MapFragment.
+     * handles populating and opening of details bottom sheet when marker is pressed.
+     * @param datum
+     */
     @Override
     public void onMapFragmentMarkerClick(Datum datum){
 
@@ -144,46 +157,29 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
             category.setText(datum.getCategory().toUpperCase());
 
             TextView prices = (TextView) bottomSheet.findViewById(R.id.detailsPrices);
-            prices.setText(
-                    datum.getCurrency().getSymbol() +
-                    String.format("%.2f",datum.getPriceDay()) +
-                    " per week / " +
-                    datum.getCurrency().getSymbol() +
-                    String.format("%.2f",datum.getPriceWeek()) +
-                    " per month"
-            );
-
+            prices.setText(Utils.getFormattedDailyWeeklyPrice(getResources(), datum));
 
             TextView ratingsInfo = (TextView) bottomSheet.findViewById(R.id.detailsRatingInfo);
             RatingBar ratings = (RatingBar) bottomSheet.findViewById(R.id.detailsRatingBar);
 
             if(datum.getReviewCount() > 0){
-                ratingsInfo.setText(datum.getReviewAverage() + " (" + datum.getReviewCount() +")");
+                ratingsInfo.setText(Utils.getFormattedReviewScore(getResources(), datum));
                 ratings.setMax(5);
                 ratings.setNumStars(5);
                 ratings.setRating(datum.getReviewAverage().floatValue());
             }
             else{
-                ratingsInfo.setText(" - Not review yet");
+                ratingsInfo.setText(getResources().getString(R.string.no_review));
                 ratings.setVisibility(View.GONE);
             }
 
-
-            String dist = "";
-            if(datum.getDistance() > 1){
-                dist = String.format("%.2f km", datum.getDistance());
-            }
-            else {
-                String distInMeters = Double.toString(Math.floor(datum.getDistance() * 1000));
-                dist = distInMeters + " m";
-            }
-
             TextView distanceTextView = (TextView) bottomSheet.findViewById(R.id.detailsDistance);
-            distanceTextView.setText(dist);
+            distanceTextView.setText(Utils.getFormattedDistance(getResources(), datum));
 
             TextView spacesTextView = (TextView) bottomSheet.findViewById(R.id.detailsSpaces);
-            spacesTextView.setText(datum.getQuantity() + " space(s)");
-
+            spacesTextView.setText(String.format(
+                    getResources().getString(R.string.spaces), datum.getQuantity().toString())
+            );
         }
         else{
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -191,8 +187,12 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
     }
 
+    /**
+     * Creates new instance of Results list fragment (bottom sheet), populating and showing it.
+     */
     private void createResultsListDialog(){
-        ListBottomSheetFragment listBottomSheetFragment = ListBottomSheetFragment.newInstance(mapFragment.getRegionSearchResponseData());
+        ListBottomSheetFragment listBottomSheetFragment = ListBottomSheetFragment.newInstance(
+                mapFragment.getRegionSearchResponseData());
         listBottomSheetFragment.show(getSupportFragmentManager(), listBottomSheetFragment.getTag());
     }
 }

@@ -28,8 +28,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Demo Search"
-                android:id="@+id/testApiButton"
+                android:text="@string/demo_search"
+                android:id="@+id/demoSearchButton"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:drawableLeft="@drawable/places_ic_search"
                 android:layout_alignParentLeft="true"/>
@@ -50,7 +50,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_list_white_24dp"
