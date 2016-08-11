@@ -288,7 +288,6 @@ public class MapFragment extends Fragment implements
         return builder.build();
     }
 
-
     private Bitmap createMarkerBitmap(Datum datum, boolean selected){
 
         IconGenerator iconGenerator = new IconGenerator(getActivity());
@@ -322,5 +321,9 @@ public class MapFragment extends Fragment implements
             Datum prevDatum = getDatumFromMarkerMap(selectedMarker);
             selectedMarker.setIcon(BitmapDescriptorFactory.fromBitmap(createMarkerBitmap(prevDatum, false)));
         }
+    }
+
+    public RegionSearchResponse getRegionSearchResponseData(){
+        return regionSearchResponse;
     }
 }

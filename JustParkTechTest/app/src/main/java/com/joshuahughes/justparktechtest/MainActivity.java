@@ -4,11 +4,15 @@ package com.joshuahughes.justparktechtest;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 import com.google.android.gms.vision.text.Text;
 import com.joshuahughes.justparktechtest.api.ApiClient;
 import com.joshuahughes.justparktechtest.api.JustParkApi;
+import com.joshuahughes.justparktechtest.fragments.ListBottomSheetFragment;
 import com.joshuahughes.justparktechtest.fragments.MapFragment;
 import com.joshuahughes.justparktechtest.models.Datum;
 import com.joshuahughes.justparktechtest.models.Near;
@@ -34,10 +39,13 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
     private ProgressBar progressBar;
     private View bottomSheet;
+    private FloatingActionButton fab;
+
+    private boolean fabShown = false;
+    private final String fabShownKey = "fabShownKey";
 
     private MapFragment mapFragment;
     private final String mapFragmentKey = "mapfragment";
-
 
     private BottomSheetBehavior bottomSheetBehavior;
 
@@ -48,11 +56,11 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
         if(savedInstanceState != null){
             mapFragment = (MapFragment) getSupportFragmentManager().getFragment(savedInstanceState, mapFragmentKey);
+            fabShown = savedInstanceState.getBoolean(fabShownKey);
         }
         else{
             //new instance of mapfragment
             mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-
         }
 
 
@@ -70,12 +78,24 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
         bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(!fabShown) {
+            fab.setTranslationY(fab.getHeight() + 160);
+        }
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createResultsListDialog();
+            }
+        });
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, mapFragmentKey, mapFragment);
+        outState.putBoolean(fabShownKey,fabShown);
     }
 
     private void ApiConfig(){
@@ -94,16 +114,17 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
             @Override
             public void onResponse(Call<RegionSearchResponse> call, Response<RegionSearchResponse> response) {
                 List<Datum> data = response.body().getData();
-                Log.d("test","success: " + data.size());
 
                 mapFragment.DrawNewResponse(response.body());
 
                 progressBar.setVisibility(View.INVISIBLE);
+
+                fab.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                fabShown = true;
             }
 
             @Override
             public void onFailure(Call<RegionSearchResponse> call, Throwable t) {
-                Log.d("test", t.toString());
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -168,5 +189,10 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
 
+    }
+
+    private void createResultsListDialog(){
+        ListBottomSheetFragment listBottomSheetFragment = ListBottomSheetFragment.newInstance(mapFragment.getRegionSearchResponseData());
+        listBottomSheetFragment.show(getSupportFragmentManager(), listBottomSheetFragment.getTag());
     }
 }
