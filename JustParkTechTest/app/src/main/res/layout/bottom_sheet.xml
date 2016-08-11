@@ -25,47 +25,22 @@
             android:textSize="18sp"
             android:paddingBottom="8dp"/>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp">
+            android:id="@+id/detailsCategory"
+            android:text="category"
+            android:gravity="center"
+            android:paddingBottom="8dp"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/detailsCategory"
-                android:text="category"
-                android:layout_weight="1"
-                android:gravity="right"
-                />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/detailsPrices"
+            android:text="£7.00 per day / £40 per week"
+            android:gravity="center"
+            android:paddingBottom="8dp"/>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:paddingLeft="8dp">
-
-                <RatingBar
-                    android:id="@+id/detailsRatingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:numStars="5"
-                    android:progressTint="@android:color/holo_orange_light"
-                    style="?android:attr/ratingBarStyleSmall"
-                    />
-                <TextView
-                    android:id="@+id/detailsRatingInfo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="4dp"
-                    android:text="info"
-
-                    />
-            </LinearLayout>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,7 +51,35 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:minWidth="48dp">
+                android:minWidth="48dp"
+                android:layout_gravity="bottom">
+
+                <RatingBar
+                    android:id="@+id/detailsRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:progressTint="@android:color/holo_orange_light"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/detailsRatingInfo"
+                    android:text="4.97 (15)"
+                    android:gravity="center_horizontal"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:minWidth="48dp"
+                android:layout_gravity="bottom">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -90,31 +93,14 @@
                     android:gravity="center_horizontal"/>
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:minWidth="48dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_format_list_numbered_black_24dp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/detailsFacilities"
-                    android:text="3 facilities"
-                    android:gravity="center_horizontal"/>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:minWidth="48dp">
+                android:minWidth="48dp"
+                android:layout_gravity="bottom">
 
                 <ImageView
                     android:layout_width="match_parent"

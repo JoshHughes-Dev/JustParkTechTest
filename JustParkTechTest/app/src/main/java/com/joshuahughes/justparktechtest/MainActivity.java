@@ -120,10 +120,20 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
             title.setText(datum.getTitle());
 
             TextView category = (TextView) bottomSheet.findViewById(R.id.detailsCategory);
-            category.setText(datum.getCategory());
+            category.setText(datum.getCategory().toUpperCase());
+
+            TextView prices = (TextView) bottomSheet.findViewById(R.id.detailsPrices);
+            prices.setText(
+                    datum.getCurrency().getSymbol() +
+                    String.format("%.2f",datum.getPriceDay()) +
+                    " per week / " +
+                    datum.getCurrency().getSymbol() +
+                    String.format("%.2f",datum.getPriceWeek()) +
+                    " per month"
+            );
+
 
             TextView ratingsInfo = (TextView) bottomSheet.findViewById(R.id.detailsRatingInfo);
-
             RatingBar ratings = (RatingBar) bottomSheet.findViewById(R.id.detailsRatingBar);
 
             if(datum.getReviewCount() > 0){
@@ -139,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
 
             String dist = "";
-
             if(datum.getDistance() > 1){
                 dist = String.format("%.2f km", datum.getDistance());
             }
@@ -151,11 +160,8 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
             TextView distanceTextView = (TextView) bottomSheet.findViewById(R.id.detailsDistance);
             distanceTextView.setText(dist);
 
-            TextView facilitiesTextView = (TextView) bottomSheet.findViewById(R.id.detailsFacilities);
-            facilitiesTextView.setText(datum.getFacilities().size() + " facilities");
-
             TextView spacesTextView = (TextView) bottomSheet.findViewById(R.id.detailsSpaces);
-            spacesTextView.setText(datum.getQuantity() + " spaces");
+            spacesTextView.setText(datum.getQuantity() + " space(s)");
 
         }
         else{
